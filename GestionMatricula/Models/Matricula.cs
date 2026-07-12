@@ -18,15 +18,6 @@ namespace GestionMatricula.Models
         public virtual Estudiante Estudiante { get; set; }
 
 
-        [Required]
-        public int CarreraId { get; set; }
-        [ForeignKey("CarreraId")]
-        public virtual Carrera Carrera { get; set; } = null!;
-
-
-        [Required]
-        public int CursoId { get; set; }
-        [ForeignKey("CursoId")]
-        public virtual Curso Curso { get; set; } = null!;
+        public  ICollection<MatriculaCurso> MatriculaCursos { get; set; } = new List<MatriculaCurso>();
     }
 }

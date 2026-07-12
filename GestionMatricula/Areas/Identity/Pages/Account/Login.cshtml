@@ -5,23 +5,100 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
+
+    .login-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding-top: 20px;
+    }
+
+    /* Título de bienvenida */
+    .welcome-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #000000;
+        margin-top: 20px;
+        margin-bottom: 35px;
+    }
+
+    /* Tarjeta azul de Login */
+    .login-card {
+        background-color: var(--institucional-teal);
+        border-radius: 12px;
+        padding: 40px 50px;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Etiquetas de texto (Correo y Contraseña) */
+    .login-card .form-label {
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    /* Inputs blancos redondeados */
+    .login-card .form-control {
+        border-radius: 10px;
+        height: 48px;
+        border: none;
+        font-size: 1rem;
+        padding-left: 15px;
+    }
+
+    /* Botón Iniciar Sesión */
+    .btn-iniciar-sesion {
+        background-color: var(--institucional-brown);
+        color: #ffffff;
+        border: none;
+        padding: 12px 45px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-iniciar-sesion:hover {
+        background-color: #5c2210;
+        color: #ffffff;
+    }
+
+   
+
+    .link {
+        color: #782E16;
+        text-decoration: underline;
+        font-size: 0.95rem;
+    }
+
+    .link:hover {
+        color: #ffffff;
+    }
+</style>
+<div class="login-container container">
+    <div class="text-center">
+        <h2 class="welcome-title">Bienvenido al sistema de matricula</h2>
+    </div>
+    <div class ="d-flex justify-content-center mb-5">
+        <div class="login-card">
             <form id="account" method="post">
-                <h2>Use a local account to log in.</h2>
-                <hr />
+     
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Input.Email" class="form-label">Email</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <div class="mb-4">
+                    <label asp-for="Input.Email" class="form-label">Correo</label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="" />
+                    <span asp-validation-for="Input.Email" class="text-warning small"></span>
                 </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password" class="form-label">Password</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <div class="mb-4">
+                    <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="" />
+                    <span asp-validation-for="Input.Password" class="text-warning small"></span>
                 </div>
                 <div class="checkbox mb-3">
                     <label asp-for="Input.RememberMe" class="form-label">
@@ -29,53 +106,22 @@
                         @Html.DisplayNameFor(m => m.Input.RememberMe)
                     </label>
                 </div>
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                <div class="text-center mt-5 mb-4">
+                    <button id="login-submit" type="submit" class="btn-iniciar-sesion">Iniciar Sesión</button>
                 </div>
-                <div>
+                <div class="mt-4">
                     <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                        <a id="forgot-password" asp-page="./ForgotPassword" class="link">Olvido su contraseña?</a>
                     </p>
                     <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="link">Registrarse como nuevo usuario</a>
                     </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
+                
                 </div>
             </form>
-        </section>
+        </div>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
+    
 </div>
 
 @section Scripts {

@@ -21,6 +21,12 @@ namespace GestionMatricula.Models
         [ForeignKey("ProfesorId")]
         public Profesor? Profesor { get; set; }
 
-        public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
+        [Required]
+        public int CarreraId { get; set; }
+
+        [ForeignKey("CarreraId")]
+        public virtual Carrera Carrera { get; set; } = null!;
+
+        public ICollection<MatriculaCurso> MatriculaCursos { get; set; } = new List<MatriculaCurso>();
     }
 }

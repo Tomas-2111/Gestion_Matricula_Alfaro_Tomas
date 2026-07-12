@@ -4,6 +4,7 @@ using GestionMatricula.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionMatricula.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260711225429_CreateTables")]
+    partial class CreateTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,9 +51,6 @@ namespace GestionMatricula.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarreraId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Creditos")
                         .HasColumnType("int");
 
@@ -63,8 +63,6 @@ namespace GestionMatricula.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarreraId");
 
                     b.HasIndex("ProfesorId");
 
@@ -108,7 +106,10 @@ namespace GestionMatricula.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CarreraId")
+                    b.Property<int>("CarreraId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CursoId")
                         .HasColumnType("int");
 
                     b.Property<int>("EstudianteId")
@@ -121,32 +122,11 @@ namespace GestionMatricula.Data.Migrations
 
                     b.HasIndex("CarreraId");
 
+                    b.HasIndex("CursoId");
+
                     b.HasIndex("EstudianteId");
 
                     b.ToTable("Matriculas");
-                });
-
-            modelBuilder.Entity("GestionMatricula.Models.MatriculaCurso", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CursoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MatriculaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CursoId");
-
-                    b.HasIndex("MatriculaId");
-
-                    b.ToTable("MatriculasCursos");
                 });
 
             modelBuilder.Entity("GestionMatricula.Models.Profesor", b =>
@@ -377,17 +357,9 @@ namespace GestionMatricula.Data.Migrations
 
             modelBuilder.Entity("GestionMatricula.Models.Curso", b =>
                 {
-                    b.HasOne("GestionMatricula.Models.Carrera", "Carrera")
-                        .WithMany()
-                        .HasForeignKey("CarreraId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("GestionMatricula.Models.Profesor", "Profesor")
                         .WithMany("Cursos")
                         .HasForeignKey("ProfesorId");
-
-                    b.Navigation("Carrera");
 
                     b.Navigation("Profesor");
                 });
@@ -405,9 +377,17 @@ namespace GestionMatricula.Data.Migrations
 
             modelBuilder.Entity("GestionMatricula.Models.Matricula", b =>
                 {
-                    b.HasOne("GestionMatricula.Models.Carrera", null)
+                    b.HasOne("GestionMatricula.Models.Carrera", "Carrera")
                         .WithMany("Matriculas")
-                        .HasForeignKey("CarreraId");
+                        .HasForeignKey("CarreraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionMatricula.Models.Curso", "Curso")
+                        .WithMany("Matriculas")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GestionMatricula.Models.Estudiante", "Estudiante")
                         .WithMany("Matriculas")
@@ -415,26 +395,11 @@ namespace GestionMatricula.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Estudiante");
-                });
-
-            modelBuilder.Entity("GestionMatricula.Models.MatriculaCurso", b =>
-                {
-                    b.HasOne("GestionMatricula.Models.Curso", "Curso")
-                        .WithMany("MatriculaCursos")
-                        .HasForeignKey("CursoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GestionMatricula.Models.Matricula", "Matricula")
-                        .WithMany("MatriculaCursos")
-                        .HasForeignKey("MatriculaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Carrera");
 
                     b.Navigation("Curso");
 
-                    b.Navigation("Matricula");
+                    b.Navigation("Estudiante");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -495,17 +460,12 @@ namespace GestionMatricula.Data.Migrations
 
             modelBuilder.Entity("GestionMatricula.Models.Curso", b =>
                 {
-                    b.Navigation("MatriculaCursos");
+                    b.Navigation("Matriculas");
                 });
 
             modelBuilder.Entity("GestionMatricula.Models.Estudiante", b =>
                 {
                     b.Navigation("Matriculas");
-                });
-
-            modelBuilder.Entity("GestionMatricula.Models.Matricula", b =>
-                {
-                    b.Navigation("MatriculaCursos");
                 });
 
             modelBuilder.Entity("GestionMatricula.Models.Profesor", b =>
