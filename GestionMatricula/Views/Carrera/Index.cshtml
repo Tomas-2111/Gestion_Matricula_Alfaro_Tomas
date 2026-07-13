@@ -1,48 +1,110 @@
 @model IEnumerable<GestionMatricula.Models.Carrera>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Carreras";
     Layout = "_LayoutPanelAdmin";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoCarrera)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.TipoCarrera)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
+
+
+    .table > thead > tr > th {
+        background-color: var(--institucional-teal) !important;
+        color: #ffffff !important;
+        padding: 15px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border: none;
+    }
+
+
+    .btn-modificar {
+        background-color: var(--institucional-brown);
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 6px 30px;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 500;
+        font-size: 0.95rem;
+        border: none;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-modificar:hover {
+        background-color: #5c2210;
+        transform: scale(1.02);
+    }
+
+    .secondary-actions {
+        margin-top: 4px;
+        display: block;
+    }
+
+    .link-secondary {
+        color: #6c757d;
+        font-size: 0.85rem;
+        text-decoration: none;
+        margin: 0 4px;
+    }
+
+    .link-secondary:hover {
+        color: var(--institucional-teal);
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    
+    <h1 class="mb-4" style="font-weight: bold;">Carreras</h1>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th style="width: 40%;">
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </th>
+                <th style="width: 20%;">
+                    @Html.DisplayNameFor(model => model.TipoCarrera)
+                </th style="width: 15%;">
+                <th style="text-align: center;">
+                    Modificar
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td class="align-middle">
+                        @Html.DisplayFor(model => item.Nombre)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(model => item.Descripcion)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(model => item.TipoCarrera)
+                    </td>
+                    <td class="text-center align-middle">
+                       
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-modificar">Modificar</a>
+                        
+                        
+                        <small class="secondary-actions">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="link-secondary">Detalles</a> | 
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="link-secondary text-danger">Eliminar</a>
+                        </small>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

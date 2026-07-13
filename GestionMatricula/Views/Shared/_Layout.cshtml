@@ -7,41 +7,104 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestionMatricula.styles.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --institucional-teal: #176B7B;
+            --institucional-brown: #782E16;
+        }
+
+    
+        .custom-navbar {
+            background-color: var(--institucional-teal) !important;
+            padding: 10px 40px !important; 
+            border-bottom: none !important;
+        }
+
+   
+        .navbar-logo-box { 
+            padding: 4px 15px;
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            margin-right: 25px;
+            text-decoration: none;
+            height: 55px;             
+            transition: transform 0.2s;
+        }
+
+       
+        .custom-navbar .nav-link, 
+        .custom-navbar .navbar-nav .nav-link,
+        .custom-navbar form button.nav-link {
+            color: #ffffff !important;
+            text-transform: uppercase !important;
+            font-weight: 500;
+            font-size: 0.9rem; 
+            letter-spacing: 1px;
+            padding: 6px 16px !important;
+            border-radius: 6px; 
+            transition: all 0.2s ease-in-out;
+        }
+
+      
+        .custom-navbar .nav-link:hover,
+        .custom-navbar form button.nav-link:hover {
+            background-color: var(--institucional-brown) !important;
+            color: #ffffff !important;
+        }
+
+        .custom-navbar .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm custom-navbar box-shadow">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GestionMatricula</a>
+                
+                <!-- Caja de LOGO -->
+                <a class="navbar-logo-box" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/img/Logo_Matricula.png" alt="Logo ULED" style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+                </a>
+                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                    <ul class="navbar-nav flex-grow-1 align-items-center">
+                        <!-- Limpio sin clases de activo, el hover responde por sí solo -->
+                        <li class="nav-item me-1">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Carreras</a>
+                            <a class="nav-link" asp-area="" asp-controller="Carrera" asp-action="IndexStudent">Carreras</a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
+                    
+                    <!-- Los enlaces de inicio de sesión también adoptan el tamaño y el hover café -->
+                    <div class="d-flex align-items-center">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted mt-5 py-3 bg-light">
         <div class="container">
             &copy; 2026 - GestionMatricula - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

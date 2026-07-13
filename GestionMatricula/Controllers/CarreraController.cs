@@ -19,6 +19,12 @@ public class CarreraController : Controller
         return View(await _context.Carreras.ToListAsync());
     }
 
+    public async Task<IActionResult> IndexStudent()
+    {
+        return View(await _context.Carreras.ToListAsync());
+    }
+
+
     // GET: CARRERAS/Details/5
     public async Task<IActionResult> Details(int? id)
     {
