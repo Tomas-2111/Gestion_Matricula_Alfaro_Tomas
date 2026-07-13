@@ -1,0 +1,98 @@
+﻿@model IEnumerable<GestionMatricula.Models.Carrera>
+
+@{
+    ViewData["Title"] = "Carreras Disponibles";
+}
+
+
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
+
+
+    .carreras-sub-header {
+        background-color: var(--institucional-brown);
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+        padding: 12px 0;
+        text-transform: uppercase;
+    }
+
+
+    .carrera-card {
+        border: 2px solid var(--institucional-brown) !important;
+        border-radius: 15px !important;
+        background-color: #ffffff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .carrera-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .btn-matricular {
+        background-color: var(--institucional-teal) !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        font-size: 1.05rem;
+        letter-spacing: 1px;
+        padding: 10px 35px;
+        border-radius: 8px;
+        border: none;
+        text-transform: uppercase;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-matricular:hover {
+        background-color: #114f5b !important;
+    }
+</style>
+
+
+<div class="carreras-sub-header text-center mb-5">
+    Carreras
+</div>
+
+<div class="container mb-5">
+   
+    <div class="row row-cols-1 row-cols-md-3 g-5 justify-content-center">
+
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                
+                <div class="card carrera-card h-100 text-center p-4 d-flex flex-column justify-content-between">
+
+                   
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+
+                  
+                        <h3 class="card-title text-uppercase mb-3" style="font-weight: 500; font-size: 1.3rem; color: #000000;">
+                            @Html.DisplayFor(modelItem => item.Nombre)
+                        </h3>
+
+                        <p class="card-text text-muted px-2" style="font-size: 1rem; line-height: 1.5;">
+                            @Html.DisplayFor(modelItem  => item.Descripcion)
+                        </p>
+
+                    </div>
+
+                    
+                    <div class="card-footer bg-transparent border-0 pt-0 pb-3">
+                        <a asp-controller="Matricula" asp-action="Matricular" asp-route-id="@item.Id" class="btn btn-matricular">
+                            Matricular
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

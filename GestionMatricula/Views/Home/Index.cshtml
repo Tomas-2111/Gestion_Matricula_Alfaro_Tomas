@@ -1,8 +1,131 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<GestionMatricula.Models.Carrera>
+
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
+
+  
+    .welcome-section {
+        background-color: #ffffff;
+        padding: 45px 20px;
+    }
+
+    .welcome-title {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #000000;
+        line-height: 1.4;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .carreras-teal-header {
+        background-color: var(--institucional-teal);
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        letter-spacing: 2px;
+        padding: 14px 0;
+        text-transform: uppercase;
+        width: 100%;
+    }
+
+    .index-cards-container {
+        padding: 50px 8%;
+        background-color: #ffffff;
+    }
+
+  
+    .index-carrera-card {
+        border: 2px solid var(--institucional-brown) !important;
+        border-radius: 15px !important;
+        background-color: #ffffff;
+        min-height: 250px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        transition: transform 0.2s ease;
+    }
+
+  
+
+    .index-card-text {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #000000;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+
+    .btn-ver-mas {
+        background-color: var(--institucional-brown) !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        font-size: 1.05rem;
+        letter-spacing: 1px;
+        padding: 10px 55px;
+        border-radius: 25px; 
+        border: none;
+        text-transform: uppercase;
+        display: inline-block;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-ver-mas:hover {
+        background-color: #5c2210 !important;
+        transform: scale(1.02);
+    }
+</style>
+
+<div class="welcome-section text-center">
+    <h1 class="welcome-title">
+        Bienvenido al<br />
+        Sistema de Matrícula<br />
+        de la Universidad ULED
+    </h1>
+</div>
+
+
+<div class="carreras-teal-header text-center">
+    Carreras
+</div>
+
+<div class="index-cards-container">
+    
+   
+    <div class="row row-cols-1 row-cols-md-3 g-5 justify-content-center mb-5">
+        
+
+        @foreach (var item in Model.Take(2))
+        {
+            <div class="col">
+                <div class="card index-carrera-card">
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <h2 class="index-card-text text-center">
+                            @Html.DisplayFor(modelItem => item.Nombre)
+                        </h2>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    <div class="text-center pt-2">
+        <a asp-controller="Carrera" asp-action="IndexStudent" class="btn btn-ver-mas">
+            Ver Más
+        </a>
+    </div>
+
 </div>

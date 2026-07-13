@@ -21,14 +21,14 @@
                 background-color: #f8f9fa;
             }
 
-            /* Contenedor Principal Flex */
+
             .app-wrapper {
                 display: flex;
                 min-height: 100vh;
                 width: 100%;
             }
 
-            /* Estilos del Menú Lateral */
+        
             .sidebar {
                 width: var(--sidebar-width);
                 background-color: var(--institucional-teal);
@@ -39,7 +39,7 @@
                 flex-direction: column;
             }
 
-            /* Caja del LOGO */
+      
             .sidebar-logo {
                 display: flex;
                 justify-content: center; 
@@ -103,19 +103,19 @@
 
     <div class="app-wrapper">
 
-        <!-- BARRA LATERAL (SIDEBAR) -->
+       
         <nav class="sidebar">
             <div class="sidebar-logo">
                 <img src="~/img/Logo_Matricula.png" alt="Logo de la Institución" class="img-fluid" style="max-height: 100px; object-fit: contain;" />
             </div>
 
             <ul class="sidebar-menu">
-                <!-- Inicio -->
+               
                 <li>
                     <a class="menu-item" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                 </li>
 
-                <!-- Cursos -->
+               
                 <li class="menu-header">Cursos</li>
                 <li>
                     <a class="menu-item menu-sub-item" asp-area="" asp-controller="Curso" asp-action="Create">Nuevo Curso</a>
@@ -124,7 +124,6 @@
                     <a class="menu-item menu-sub-item" asp-area="" asp-controller="Curso" asp-action="Index">Ver Cursos</a>
                 </li>
 
-                <!-- Carreras -->
                 <li class="menu-header">Carreras</li>
                 <li>
                     <a class="menu-item menu-sub-item" asp-area="" asp-controller="Carrera" asp-action="Create">Nueva Carrera</a>
@@ -133,7 +132,7 @@
                     <a class="menu-item menu-sub-item" asp-area="" asp-controller="Carrera" asp-action="Index">Ver Carreras</a>
                 </li>
 
-                <!-- Profesores -->
+                
                 <li class="menu-header">Profesores</li>
                 <li>
                     <a class="menu-item menu-sub-item" asp-area="" asp-controller="Profesor" asp-action="Create">Nuevo Profesor</a>
@@ -142,14 +141,14 @@
                     <a class="menu-item menu-sub-item" asp-area="" asp-controller="Profesor" asp-action="Index">Ver Profesores</a>
                 </li>
 
-                <!-- Mi Perfil -->
+             
                 <li class="mt-4">
                     <a class="menu-item" asp-area="Identity" asp-page="/Account/Manage/Index">Mi perfil</a>
                 </li>
             </ul>
         </nav>
 
-        <!-- CONTENIDO DINÁMICO (DERECHA) -->
+     
         <main class="main-content">
             <div class="container-fluid">
                 @RenderBody()
