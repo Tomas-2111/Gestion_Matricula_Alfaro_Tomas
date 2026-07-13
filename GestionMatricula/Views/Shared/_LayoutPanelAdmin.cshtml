@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema de Matrícula</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+            :root {
+                --institucional-teal: #176B7B;
+                --institucional-brown: #782E16;
+                --sidebar-width: 280px;
+            }
+
+            body, html {
+                height: 100%;
+                margin: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f8f9fa;
+            }
+
+            /* Contenedor Principal Flex */
+            .app-wrapper {
+                display: flex;
+                min-height: 100vh;
+                width: 100%;
+            }
+
+            /* Estilos del Menú Lateral */
+            .sidebar {
+                width: var(--sidebar-width);
+                background-color: var(--institucional-teal);
+                min-height: 100vh;
+                flex-shrink: 0;
+                padding: 30px 20px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Caja del LOGO */
+            .sidebar-logo {
+                display: flex;
+                justify-content: center; 
+                align-items: center; 
+                padding: 10px;
+                margin-top: 10px; 
+                margin-bottom: 30px; 
+                width: 100%;
+            }
+
+    
+            .sidebar-menu {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+        
+            .menu-header {
+                color: #ffffff;
+                font-size: 1.25rem;
+                font-weight: 500;
+                margin-top: 20px;
+                margin-bottom: 8px;
+                padding-left: 10px;
+            }
+
+          
+            .menu-item {
+                display: block;
+                color: #ffffff;
+                text-decoration: none;
+                padding: 10px 15px;
+                font-size: 1.1rem;
+                transition: all 0.2s ease;
+                margin-bottom: 4px;
+            }
+
+         
+            .menu-sub-item {
+                padding-left: 30px;
+            }
+
+ 
+            .menu-item:hover {
+                color: #ffffff;
+                background-color: var(--institucional-brown);
+                border-radius: 8px;
+            }
+
+      
+            .main-content {
+                flex-grow: 1;
+                padding: 40px 50px;
+                overflow-y: auto;
+                background-color: #ffffff;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+
+        <!-- BARRA LATERAL (SIDEBAR) -->
+        <nav class="sidebar">
+            <div class="sidebar-logo">
+                <img src="~/img/Logo_Matricula.png" alt="Logo de la Institución" class="img-fluid" style="max-height: 100px; object-fit: contain;" />
+            </div>
+
+            <ul class="sidebar-menu">
+                <!-- Inicio -->
+                <li>
+                    <a class="menu-item" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                </li>
+
+                <!-- Cursos -->
+                <li class="menu-header">Cursos</li>
+                <li>
+                    <a class="menu-item menu-sub-item" asp-area="" asp-controller="Curso" asp-action="Create">Nuevo Curso</a>
+                </li>
+                <li>
+                    <a class="menu-item menu-sub-item" asp-area="" asp-controller="Curso" asp-action="Index">Ver Cursos</a>
+                </li>
+
+                <!-- Carreras -->
+                <li class="menu-header">Carreras</li>
+                <li>
+                    <a class="menu-item menu-sub-item" asp-area="" asp-controller="Carrera" asp-action="Create">Nueva Carrera</a>
+                </li>
+                <li>
+                    <a class="menu-item menu-sub-item" asp-area="" asp-controller="Carrera" asp-action="Index">Ver Carreras</a>
+                </li>
+
+                <!-- Profesores -->
+                <li class="menu-header">Profesores</li>
+                <li>
+                    <a class="menu-item menu-sub-item" asp-area="" asp-controller="Profesor" asp-action="Create">Nuevo Profesor</a>
+                </li>
+                <li>
+                    <a class="menu-item menu-sub-item" asp-area="" asp-controller="Profesor" asp-action="Index">Ver Profesores</a>
+                </li>
+
+                <!-- Mi Perfil -->
+                <li class="mt-4">
+                    <a class="menu-item" asp-area="Identity" asp-page="/Account/Manage/Index">Mi perfil</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- CONTENIDO DINÁMICO (DERECHA) -->
+        <main class="main-content">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </main>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

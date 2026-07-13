@@ -11,6 +11,9 @@ namespace GestionMatricula.Models
         [StringLength(150)]
         public string Nombre { get; set; }
 
-        public ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
+        public string Descripcion { get; set; }
+
+        public string TipoCarrera { get; set; }
+
     }
 }

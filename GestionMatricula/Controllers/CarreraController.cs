@@ -48,7 +48,7 @@ public class CarreraController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,Matriculas")] Carrera carrera)
+    public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,TipoCarrera")] Carrera carrera)
     {
         if (ModelState.IsValid)
         {
@@ -80,7 +80,7 @@ public class CarreraController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Matriculas")] Carrera carrera)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Descripcion,TipoCarrera")] Carrera carrera)
     {
         if (id != carrera.Id)
         {
