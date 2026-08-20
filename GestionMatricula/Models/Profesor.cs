@@ -16,7 +16,7 @@ namespace GestionMatricula.Models
         [StringLength(100)]
         public string Especialidad { get; set; } 
 
-        [Required(ErrorMessage = "El grado academico es obligatoriO")]
+        [Required(ErrorMessage = "El grado academico es obligatorio")]
         [StringLength(100)]
         public string GradoAcademico { get; set; } 
 

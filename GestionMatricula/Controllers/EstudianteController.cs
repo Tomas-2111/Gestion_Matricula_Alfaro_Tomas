@@ -1,22 +1,31 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionMatricula.Models;
 using GestionMatricula.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
+[Authorize]
 public class EstudianteController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public EstudianteController(ApplicationDbContext context)
+    public EstudianteController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     // GET: ESTUDIANTES
-    public async Task<IActionResult> Index()    
+    public async Task<IActionResult> Index()
     {
-        return View(await _context.Estudiantes.ToListAsync());
+        var estudiantes = await _context.Estudiantes
+            .Include(e => e.Carrera)
+            .Include(e => e.User)
+            .ToListAsync();
+
+        return View(estudiantes);
     }
 
     // GET: ESTUDIANTES/Details/5
@@ -28,7 +37,10 @@ public class EstudianteController : Controller
         }
 
         var estudiante = await _context.Estudiantes
+            .Include(e => e.Carrera)
+            .Include(e => e.User)
             .FirstOrDefaultAsync(m => m.Id == id);
+
         if (estudiante == null)
         {
             return NotFound();
@@ -37,25 +49,70 @@ public class EstudianteController : Controller
         return View(estudiante);
     }
 
-    // GET: ESTUDIANTES/Create
-    public IActionResult Create()
+    // GET: ESTUDIANTES/Create?carreraId=5
+    public async Task<IActionResult> Create(int? carreraId)
     {
-        return View();
+        if (carreraId == null)
+        {
+            return RedirectToAction("IndexStudent", "Carrera");
+        }
+
+        var userId = _userManager.GetUserId(User);
+
+        // Validación: Comprobar si el usuario ya tiene un perfil de estudiante
+        var estudianteExistente = await _context.Estudiantes.AnyAsync(e => e.UserId == userId);
+        if (estudianteExistente)
+        {
+            TempData["MensajeError"] = "El usuario ya cuenta con una carrera asignada.";
+            return RedirectToAction("IndexStudent", "Carrera");
+        }
+
+        var carrera = await _context.Carreras.FindAsync(carreraId);
+        if (carrera == null)
+        {
+            return NotFound();
+        }
+
+        var estudiante = new Estudiante
+        {
+            CarreraId = carreraId.Value,
+            UserId = userId
+        };
+
+        ViewBag.NombreCarrera = carrera.Nombre;
+
+        return View(estudiante);
     }
 
     // POST: ESTUDIANTES/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,Cedula,UserId,User,Matriculas")] Estudiante estudiante)
+    public async Task<IActionResult> Create([Bind("Nombre,Cedula,CarreraId")] Estudiante estudiante)
     {
+        var currentUserId = _userManager.GetUserId(User);
+        estudiante.UserId = currentUserId;
+
+        // Limpiamos las navegaciones del ModelState para que no causen falla en IsValid
+        ModelState.Remove("UserId");
+        ModelState.Remove("User");
+        ModelState.Remove("Carrera");
+
         if (ModelState.IsValid)
         {
             _context.Add(estudiante);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            // Guardamos el mensaje en TempData para leerlo en el redireccionamiento
+            TempData["MensajeExito"] = "¡Te has matriculado exitosamente en la carrera!";
+
+            // Redirige a la vista IndexStudent del controlador Carrera
+            return RedirectToAction("IndexStudent", "Carrera");
         }
+
+        // Si no es válido, se queda en la misma vista
+        var carrera = await _context.Carreras.FindAsync(estudiante.CarreraId);
+        ViewBag.NombreCarrera = carrera?.Nombre;
+
         return View(estudiante);
     }
 
@@ -67,25 +124,31 @@ public class EstudianteController : Controller
             return NotFound();
         }
 
-        var estudiante = await _context.Estudiantes.FindAsync(id);
+        var estudiante = await _context.Estudiantes
+            .Include(e => e.Carrera)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
         if (estudiante == null)
         {
             return NotFound();
         }
+
+        ViewBag.NombreCarrera = estudiante.Carrera?.Nombre;
         return View(estudiante);
     }
 
     // POST: ESTUDIANTES/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Cedula,UserId,User,Matriculas")] Estudiante estudiante)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Cedula,CarreraId,UserId")] Estudiante estudiante)
     {
         if (id != estudiante.Id)
         {
             return NotFound();
         }
+
+        ModelState.Remove("User");
+        ModelState.Remove("Carrera");
 
         if (ModelState.IsValid)
         {
@@ -107,6 +170,10 @@ public class EstudianteController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+
+        var carrera = await _context.Carreras.FindAsync(estudiante.CarreraId);
+        ViewBag.NombreCarrera = carrera?.Nombre;
+
         return View(estudiante);
     }
 
@@ -119,7 +186,10 @@ public class EstudianteController : Controller
         }
 
         var estudiante = await _context.Estudiantes
+            .Include(e => e.Carrera)
+            .Include(e => e.User)
             .FirstOrDefaultAsync(m => m.Id == id);
+
         if (estudiante == null)
         {
             return NotFound();
@@ -131,19 +201,19 @@ public class EstudianteController : Controller
     // POST: ESTUDIANTES/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var estudiante = await _context.Estudiantes.FindAsync(id);
         if (estudiante != null)
         {
             _context.Estudiantes.Remove(estudiante);
+            await _context.SaveChangesAsync();
         }
 
-        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool EstudianteExists(int? id)
+    private bool EstudianteExists(int id)
     {
         return _context.Estudiantes.Any(e => e.Id == id);
     }

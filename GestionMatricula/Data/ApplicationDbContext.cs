@@ -17,5 +17,17 @@ namespace GestionMatricula.Data
         public DbSet<Matricula> Matriculas { get; set; }
 
         public DbSet<MatriculaCurso> MatriculasCursos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+         
+            modelBuilder.Entity<Estudiante>()
+                .HasOne(e => e.Carrera)
+                .WithMany(c => c.Estudiantes)
+                .HasForeignKey(e => e.CarreraId)
+                .OnDelete(DeleteBehavior.Restrict); 
+        }
     }
 }

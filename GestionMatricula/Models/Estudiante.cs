@@ -22,6 +22,13 @@ namespace GestionMatricula.Models
         [ForeignKey("UserId")]
         public IdentityUser User { get; set; }
 
+        [Required(ErrorMessage = "La carrera es obligatoria.")]
+        public int CarreraId { get; set; }
+
+        [ForeignKey("CarreraId")]
+        public virtual Carrera Carrera { get; set; }
+
+
         public virtual ICollection<Matricula> Matriculas { get; set; } = new List<Matricula>();
     }
 }

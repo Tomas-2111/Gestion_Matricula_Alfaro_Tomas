@@ -1,42 +1,95 @@
 @model GestionMatricula.Models.Carrera
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nueva Carrera";
+    Layout = "_LayoutPanelAdmin";
 }
 
-<h1>Create</h1>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
 
-<h4>Carrera</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .form-box {
+        border: 2px solid var(--institucional-teal);
+        background-color: #ffffff;
+    }
 
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
+    .box-header {
+        background-color: var(--institucional-teal);
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+    }
 
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
+    .custom-input {
+        border-radius: 12px !important;
+        border: 1px solid #000000;
+        padding: 10px 15px;
+    }
 
-            <div class="form-group">
-                <label asp-for="TipoCarrera" class="control-label"></label>
-                <input asp-for="TipoCarrera" class="form-control" />
-                <span asp-validation-for="TipoCarrera" class="text-danger"></span>
+    .btn-guardar-proto {
+        background-color: var(--institucional-brown);
+        color: #ffffff !important;
+        border-radius: 15px;
+        padding: 8px 45px;
+        font-weight: 500;
+        border: none;
+        transition: opacity 0.2s ease;
+    }
+
+        .btn-guardar-proto:hover {
+            opacity: 0.9;
+            color: #ffffff;
+        }
+</style>
+
+<div class="container-fluid mt-2">
+   
+    <h1 class="mb-5 fw-bold" style="color: #000000;">Nueva Carrera</h1>
+
+    <div class="row">
+        <div class="col-12 col-lg-10">
+            <div class="form-box">
+                <div class="box-header">
+                    Nueva Carrera
+                </div>
+                <div class="p-4">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Nombre" class="form-label fw-bold"></label>
+                            <input asp-for="Nombre" class="form-control custom-input" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Descripcion" class="form-label fw-bold">Descripción</label>
+                            <input asp-for="Descripcion" class="form-control custom-input" />
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+
+                        <div class="row align-items-end mb-3">
+                            <div class="col-md-7 form-group mb-3 mb-md-0">
+                                <label asp-for="TipoCarrera" class="form-label fw-bold">Tipo de Carrera</label>
+                                <input asp-for="TipoCarrera" class="form-control custom-input" />
+                                <span asp-validation-for="TipoCarrera" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-5 text-end">
+                                <button type="submit" class="btn btn-guardar-proto">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
