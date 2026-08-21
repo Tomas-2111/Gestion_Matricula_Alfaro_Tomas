@@ -55,29 +55,32 @@
                     Nuevo Profesor
                 </div>
                 <div class="p-4">
-                    <form asp-action="Create">
+                    <form id="formCreateProfesor" asp-action="Create">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="form-group mb-4">
                             <label asp-for="Nombre" class="form-label fw-bold"></label>
-                            <input asp-for="Nombre" class="form-control custom-input" />
+                            <input asp-for="Nombre" id="Nombre" class="form-control custom-input" maxlength="100" />
                             <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <span id="errNombre" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="form-group mb-4">
                             <label asp-for="Especialidad" class="form-label fw-bold">Especialidad</label>
-                            <input asp-for="Especialidad" class="form-control custom-input" />
+                            <input asp-for="Especialidad" id="Especialidad" class="form-control custom-input" maxlength="100" />
                             <span asp-validation-for="Especialidad" class="text-danger"></span>
+                            <span id="errEspecialidad" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="row align-items-end mb-3">
                             <div class="col-md-7 form-group mb-3 mb-md-0">
                                 <label asp-for="GradoAcademico" class="form-label fw-bold">Grado Académico</label>
-                                <input asp-for="GradoAcademico" class="form-control custom-input" />
+                                <input asp-for="GradoAcademico" id="GradoAcademico" class="form-control custom-input" maxlength="100" />
                                 <span asp-validation-for="GradoAcademico" class="text-danger"></span>
+                                <span id="errGradoAcademico" class="text-danger small d-none"></span>
                             </div>
                             <div class="col-md-5 text-end">
-                                <button type="submit" class="btn btn-guardar-proto">Guardar</button>
+                                <button type="submit" id="btnSubmit" class="btn btn-guardar-proto">Guardar</button>
                             </div>
                         </div>
                     </form>
@@ -91,4 +94,44 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function() {
+
+            $("#Nombre").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errNombre").text("El nombre es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errNombre").text("El nombre no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errNombre").addClass("d-none");
+                }
+            });
+
+            $("#Especialidad").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errEspecialidad").text("La especialidad es obligatoria.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errEspecialidad").text("La especialidad no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errEspecialidad").addClass("d-none");
+                }
+            });
+
+            $("#GradoAcademico").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errGradoAcademico").text("El grado académico es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errGradoAcademico").text("El grado académico no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errGradoAcademico").addClass("d-none");
+                }
+            });
+
+     
+        });
+    </script>
 }

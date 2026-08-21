@@ -12,7 +12,7 @@ namespace GestionMatricula.Models
         [StringLength(150)]
         public string Nombre { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Los creditos del curso son obligatorios.")]
         [Range(1, 5, ErrorMessage = "Los créditos deben estar entre 1 y 5.")]
         public int Creditos { get; set; }
 
@@ -21,7 +21,7 @@ namespace GestionMatricula.Models
         [ForeignKey("ProfesorId")]
         public Profesor? Profesor { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "La carrera del curso es obligatoria.")]
         public int CarreraId { get; set; }
 
         [ForeignKey("CarreraId")]

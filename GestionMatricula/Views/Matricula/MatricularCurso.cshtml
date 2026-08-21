@@ -1,0 +1,261 @@
+@model IEnumerable<GestionMatricula.Models.Curso>
+
+@{
+    ViewData["Title"] = "Matrícula de Cursos";
+    Layout = null;
+    var estudiante = ViewBag.Estudiante as GestionMatricula.Models.Estudiante;
+    var cursosYaMatriculados = ViewBag.CursosYaMatriculados as List<int> ?? new List<int>();
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+            :root {
+                --institucional-teal: #176B7B;
+                --institucional-brown: #782E16;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+            }
+
+ 
+            .sidebar {
+                width: 250px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: var(--institucional-teal);
+                padding: 20px 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                z-index: 1000;
+            }
+
+            .sidebar-logo {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+                margin-top: 10px;
+                margin-bottom: 30px;
+                width: 100%;
+            }
+
+            .nav-menu {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-item-btn {
+                color: #ffffff;
+                text-decoration: none;
+                padding: 12px 20px;
+                font-size: 1.05rem;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                display: block;
+            }
+
+            
+
+            .nav-item-btn:hover {
+                color: #ffffff;
+                background-color: var(--institucional-brown);
+                border-radius: 8px;
+            }
+
+
+            
+            .main-content {
+                margin-left: 250px;
+                padding: 30px 40px;
+            }
+
+            .page-title {
+                font-weight: bold;
+                color: #000000;
+                font-size: 2.2rem;
+                margin-bottom: 25px;
+            }
+
+            .search-box {
+                border: 2px solid var(--institucional-teal);
+                border-radius: 4px;
+                padding: 10px 15px;
+                width: 100%;
+                margin-bottom: 25px;
+                font-size: 1rem;
+                outline: none;
+            }
+
+            .table-container {
+                border: 2px solid var(--institucional-teal);
+                border-radius: 8px;
+                overflow: hidden;
+                background-color: #ffffff;
+            }
+
+            .table-custom {
+                margin-bottom: 0;
+                width: 100%;
+            }
+
+            .table-custom thead tr th {
+                background-color: var(--institucional-teal) !important;
+                color: #ffffff !important;
+                padding: 14px 15px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border: none;
+                vertical-align: middle;
+            }
+
+            .table-custom tbody tr td {
+                padding: 14px 15px;
+                font-size: 0.95rem;
+                border-bottom: 1px solid #e0e0e0;
+                vertical-align: middle;
+            }
+
+ 
+            .custom-check {
+                width: 24px;
+                height: 24px;
+                accent-color: var(--institucional-brown);
+                cursor: pointer;
+            }
+
+            .btn-continuar {
+                background-color: var(--institucional-brown);
+                color: #ffffff !important;
+                border: none;
+                padding: 10px 45px;
+                border-radius: 8px;
+                font-size: 1.05rem;
+                font-weight: 500;
+                transition: background-color 0.2s ease;
+            }
+
+                .btn-continuar:hover {
+                    background-color: #5c2210;
+                }
+    </style>
+</head>
+<body>
+
+
+    <div class="sidebar">
+        <div>
+            <div class="sidebar-logo">
+                <img src="~/img/Logo_Matricula.png" alt="Logo de la Institución" class="img-fluid" style="max-height: 100px; object-fit: contain;" />
+            </div>
+
+            <nav class="nav-menu">
+                <a asp-controller="Estudiante" asp-action="Panel" class="nav-item-btn">Inicio</a>
+                <a asp-controller="Matricula" asp-action="MatricularCurso" class="nav-item-btn active">Matricular Curso</a>
+            </nav>
+        </div>
+
+        <div>
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-item-btn">Mi perfil</a>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+
+        <h1 class="page-title">Matrícula de Cursos</h1>
+
+        @if (TempData["MensajeErrorM"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["MensajeErrorM"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <input type="text" id="inputBusqueda" class="search-box" placeholder="Busqueda" />
+
+        <form asp-action="MatricularCurso" method="post">
+            <div class="table-container mb-4">
+                <table class="table table-custom" id="tablaCursos">
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Profesor</th>
+                            <th>Código / ID</th>
+                            <th>Créditos</th>
+                            <th class="text-center">Matricular</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var curso in Model)
+                            {
+                                bool yaMatriculado = cursosYaMatriculados.Contains(curso.Id);
+                                <tr class="fila-curso">
+                                    <td class="fw-bold">@curso.Nombre</td>
+                                    <td>@(curso.Profesor != null ? curso.Profesor.Nombre : "Por asignar")</td>
+                                    <td>CURSO-@curso.Id</td>
+                                    <td>@curso.Creditos</td>
+                                    <td class="text-center">
+                                        @if (yaMatriculado)
+                                        {
+                                            <span class="badge bg-secondary">Matriculado</span>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="cursosSeleccionados" value="@curso.Id" class="custom-check" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    No hay cursos disponibles para tu carrera actualmente.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end mb-5">
+                <button type="submit" class="btn-continuar">Continuar</button>
+            </div>
+        </form>
+    </div>
+
+   <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#inputBusqueda").on("keyup", function () {
+                var valorBusqueda = $(this).val().toLowerCase().trim();
+
+                $("#tablaCursos tbody .fila-curso").filter(function () {
+                    var textoFila = $(this).text().toLowerCase();
+                    $(this).toggle(textoFila.indexOf(valorBusqueda) > -1);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

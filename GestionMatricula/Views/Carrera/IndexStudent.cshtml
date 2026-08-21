@@ -1,5 +1,6 @@
-﻿@model IEnumerable<GestionMatricula.Models.Carrera>
-
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<GestionMatricula.Models.Carrera>
+@inject SignInManager<IdentityUser> SignInManager
 @{
     ViewData["Title"] = "Carreras Disponibles";
 }
@@ -90,9 +91,18 @@
                     </div>
 
                     <div class="card-footer bg-transparent border-0 pt-0 pb-3">
-                        <a asp-controller="Estudiante" asp-action="Create" asp-route-carreraId="@item.Id" class="btn btn-matricular">
-                            Matricular
-                        </a>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <a asp-controller="Estudiante" asp-action="Create" asp-route-carreraId="@item.Id" class="btn btn-matricular">
+                                Matricular
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Create", "Estudiante", new { carreraId = item.Id })" class="btn btn-matricular">
+                                Iniciar Sesión para Matricular
+                            </a>
+                        }
                     </div>
                 </div>
             </div>

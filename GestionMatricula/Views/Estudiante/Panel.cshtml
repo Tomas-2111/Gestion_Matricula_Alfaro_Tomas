@@ -1,0 +1,240 @@
+﻿@model GestionMatricula.Models.Estudiante
+
+@{
+    ViewData["Title"] = "Panel del Estudiante";
+    Layout = null;
+    var cursosMatriculados = ViewBag.CursosMatriculados as IEnumerable<GestionMatricula.Models.MatriculaCurso>;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+            :root {
+                --institucional-teal: #176B7B;
+                --institucional-brown: #782E16;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+            }
+
+           
+            .sidebar {
+                width: 250px;
+                height: 100vh;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: var(--institucional-teal);
+                padding: 20px 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                z-index: 1000;
+            }
+
+            .sidebar-logo {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+                margin-top: 10px;
+                margin-bottom: 30px;
+                width: 100%;
+            }
+
+            .nav-menu {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-item-btn {
+                color: #ffffff;
+                text-decoration: none;
+                padding: 12px 20px;
+                font-size: 1.05rem;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                display: block;
+            }
+
+            
+
+            .nav-item-btn:hover {
+                color: #ffffff;
+                background-color: var(--institucional-brown);
+                border-radius: 8px;
+            }
+
+        
+            .main-content {
+                margin-left: 250px;
+                padding: 30px 40px;
+            }
+
+            .welcome-header {
+                font-weight: bold;
+                color: #000000;
+                font-size: 2rem;
+            }
+
+          
+            .info-card {
+                border: 2px solid var(--institucional-teal);
+                border-radius: 15px;
+                background-color: #ffffff;
+                padding: 20px 25px;
+                min-height: 110px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            }
+
+            .info-card .card-label {
+                font-size: 1.15rem;
+                color: #000000;
+                margin-bottom: 8px;
+            }
+
+            .info-card .card-value {
+                font-size: 1.35rem;
+                color: var(--institucional-brown);
+                font-weight: 600;
+            }
+
+            .section-subtitle {
+                text-align: center;
+                font-size: 1.25rem;
+                font-weight: 500;
+                color: #333333;
+            }
+
+       
+            .table-custom {
+                border-collapse: separate;
+                border-spacing: 0;
+                width: 100%;
+                border: 2px solid #000000;
+            }
+
+            .table-custom thead tr th {
+                background-color: var(--institucional-teal) !important;
+                color: #ffffff !important;
+                padding: 14px 20px;
+                font-size: 1rem;
+                font-weight: 500;
+                border: none;
+            }
+
+            .table-custom tbody tr td {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+    </style>
+</head>
+<body>
+
+
+    <div class="sidebar">
+        <div>
+            
+            <div class="sidebar-logo">
+                <img src="~/img/Logo_Matricula.png" alt="Logo de la Institución" class="img-fluid" style="max-height: 100px; object-fit: contain;" />
+            </div>
+  
+
+            <nav class="nav-menu">
+                <a asp-controller="Carrera" asp-action="IndexStudent" class="nav-item-btn active">Inicio</a>
+                <a asp-controller="Matricula" asp-action="MatricularCurso" class="nav-item-btn">Matricular Curso</a>
+            </nav>
+        </div>
+
+        <div>
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-item-btn">Mi perfil</a>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+        <div class="container-fluid mt-3 px-4">
+
+    
+            <h1 class="welcome-header mb-4">Bienvenido @Model.Nombre</h1>
+
+        
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-md-6">
+                    <div class="info-card">
+                        <div class="card-label">Datos del Estudiante:</div>
+                        <div class="card-value">
+                            @Model.Nombre <span class="fs-6 text-muted fw-normal">(Cédula: @Model.Cedula)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="info-card">
+                        <div class="card-label">Carrera Matriculada:</div>
+                        <div class="card-value">
+                            @(Model.Carrera != null ? Model.Carrera.Nombre : "Sin Carrera")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        
+            <div class="section-subtitle mb-3">Cursos Matriculados</div>
+
+            <div class="table-responsive mb-5">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Código</th>
+                            <th style="width: 35%;">Curso</th>
+                            <th style="width: 30%;">Profesor</th>
+                            <th style="width: 20%;">Fecha de matrícula</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (cursosMatriculados != null && cursosMatriculados.Any())
+                        {
+                            @foreach (var item in cursosMatriculados)
+                            {
+                                <tr>
+                                    <td class="align-middle fw-bold">#@item.CursoId</td>
+                                    <td class="align-middle">@item.Curso.Nombre</td>
+                                    <td class="align-middle">
+                                        @(item.Curso.Profesor != null ? item.Curso.Profesor.Nombre : "Por asignar")
+                                    </td>
+                                    <td class="align-middle">
+                                        @item.Matricula.FechaMatricula.ToString("dd/MM/yyyy")
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    No tienes cursos matriculados actualmente.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

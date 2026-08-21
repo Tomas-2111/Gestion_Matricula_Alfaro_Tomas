@@ -48,10 +48,10 @@
                 <th style="width: 30%;">
                     @Html.DisplayNameFor(model => model.Nombre)
                 </th>
-                <th style="width: 30%;">
+                <th style="width: 35%;">
                     @Html.DisplayNameFor(model => model.Especialidad)
                 </th>
-                <th style="width: 25%;">
+                <th style="width: 20%;">
                     @Html.DisplayNameFor(model => model.GradoAcademico)
                 </th>
                 <th style="width: 15%; text-align: center;">
@@ -64,13 +64,13 @@
             {
                 <tr>
                     <td class="align-middle">
-                        @Html.DisplayFor(model => item.Nombre)
+                        @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
                     <td class="align-middle">
-                        @Html.DisplayFor(model => item.Especialidad)
+                        @Html.DisplayFor(modelItem => item.Especialidad)
                     </td>
                     <td class="align-middle">
-                        @Html.DisplayFor(model => item.GradoAcademico)
+                        @Html.DisplayFor(modelItem => item.GradoAcademico)
                     </td>
                     <td class="text-center align-middle">
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn-modificar">Modificar</a>

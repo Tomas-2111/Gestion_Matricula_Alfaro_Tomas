@@ -1,7 +1,7 @@
 @model GestionMatricula.Models.Profesor
 
 @{
-    ViewData["Title"] = "Modificar Profesores";
+    ViewData["Title"] = "Modificar Profesor";
     Layout = "_LayoutPanelAdmin";
 }
 
@@ -60,7 +60,7 @@
 </style>
 
 <div class="container-fluid mt-2">
-    <h1 class="mb-5 fw-bold" style="color: #000000;">Modificar Profesores</h1>
+    <h1 class="mb-5 fw-bold" style="color: #000000;">Modificar Profesor</h1>
 
     <div class="row">
         <div class="col-12 col-lg-10">
@@ -69,27 +69,30 @@
                     Modificar
                 </div>
                 <div class="p-4">
-                    <form asp-action="Edit">
+                    <form id="formEditProfesor" asp-action="Edit">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                         <input type="hidden" asp-for="Id" />
 
                         <div class="form-group mb-4">
                             <label asp-for="Nombre" class="form-label fw-bold"></label>
-                            <input asp-for="Nombre" class="form-control custom-input" />
+                            <input asp-for="Nombre" id="NombreEdit" class="form-control custom-input" maxlength="100" />
                             <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <span id="errNombreEdit" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="form-group mb-4">
                             <label asp-for="Especialidad" class="form-label fw-bold">Especialidad</label>
-                            <input asp-for="Especialidad" class="form-control custom-input" />
+                            <input asp-for="Especialidad" id="EspecialidadEdit" class="form-control custom-input" maxlength="100" />
                             <span asp-validation-for="Especialidad" class="text-danger"></span>
+                            <span id="errEspecialidadEdit" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="row align-items-center mb-3">
                             <div class="col-md-7 form-group mb-3 mb-md-0">
                                 <label asp-for="GradoAcademico" class="form-label fw-bold">Grado Académico</label>
-                                <input asp-for="GradoAcademico" class="form-control custom-input" />
+                                <input asp-for="GradoAcademico" id="GradoAcademicoEdit" class="form-control custom-input" maxlength="100" />
                                 <span asp-validation-for="GradoAcademico" class="text-danger"></span>
+                                <span id="errGradoAcademicoEdit" class="text-danger small d-none"></span>
                             </div>
                             <div class="col-md-5 d-flex flex-column align-items-end gap-2">
                                 <button type="submit" class="btn btn-guardar-proto">Guardar</button>
@@ -107,4 +110,43 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function() {
+
+            $("#NombreEdit").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errNombreEdit").text("El nombre es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errNombreEdit").text("El nombre no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errNombreEdit").addClass("d-none");
+                }
+            });
+
+            $("#EspecialidadEdit").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errEspecialidadEdit").text("La especialidad es obligatoria.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errEspecialidadEdit").text("La especialidad no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errEspecialidadEdit").addClass("d-none");
+                }
+            });
+
+            $("#GradoAcademicoEdit").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errGradoAcademicoEdit").text("El grado académico es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errGradoAcademicoEdit").text("El grado académico no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errGradoAcademicoEdit").addClass("d-none");
+                }
+            });
+
+        });
+    </script>
 }

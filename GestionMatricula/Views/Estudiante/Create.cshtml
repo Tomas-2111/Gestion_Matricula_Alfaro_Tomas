@@ -62,13 +62,12 @@
                     Completa tus Datos
                 </div>
                 <div class="p-4">
-                    <form asp-action="Create">
+                    <form id="formCreateEstudiante" asp-action="Create">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-       
-                        <input type="hidden" asp-for="CarreraId" />
+                        <input type="hidden" asp-for="CarreraId" id="CarreraId" />
+                        <span id="errCarreraId" class="text-danger small d-none mb-3 d-block"></span>
 
-      
                         <div class="form-group mb-4">
                             <label class="form-label fw-bold">Carrera Seleccionada</label>
                             <input class="form-control custom-input-disabled" value="@ViewBag.NombreCarrera" readonly />
@@ -76,18 +75,20 @@
 
                         <div class="form-group mb-4">
                             <label asp-for="Nombre" class="form-label fw-bold">Nombre Completo</label>
-                            <input asp-for="Nombre" class="form-control custom-input" placeholder="Ingrese su nombre completo" />
+                            <input asp-for="Nombre" id="Nombre" class="form-control custom-input" placeholder="Ingrese su nombre completo" maxlength="100" />
                             <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <span id="errNombre" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="row align-items-end mb-3">
                             <div class="col-md-7 form-group mb-3 mb-md-0">
                                 <label asp-for="Cedula" class="form-label fw-bold">Cédula / Identificación</label>
-                                <input asp-for="Cedula" class="form-control custom-input" placeholder="Ingrese su número de cédula" />
+                                <input asp-for="Cedula" id="Cedula" class="form-control custom-input" placeholder="Ingrese su número de cédula" maxlength="20" />
                                 <span asp-validation-for="Cedula" class="text-danger"></span>
+                                <span id="errCedula" class="text-danger small d-none"></span>
                             </div>
                             <div class="col-md-5 text-end">
-                                <button type="submit" class="btn btn-guardar-proto">Guardar</button>
+                                <button type="submit" id="btnSubmit" class="btn btn-guardar-proto">Guardar</button>
                             </div>
                         </div>
                     </form>
@@ -101,4 +102,33 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function() {
+
+            $("#Nombre").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errNombre").text("El nombre es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errNombre").text("El nombre no puede exceder los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errNombre").addClass("d-none");
+                }
+            });
+
+            $("#Cedula").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errCedula").text("La cédula es obligatoria.").removeClass("d-none");
+                } else if (valor.length > 20) {
+                    $("#errCedula").text("La cédula no puede exceder los 20 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errCedula").addClass("d-none");
+                }
+            });
+
+        
+        });
+    </script>
 }

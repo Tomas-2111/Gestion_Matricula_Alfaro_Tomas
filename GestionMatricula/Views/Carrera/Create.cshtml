@@ -46,7 +46,6 @@
 </style>
 
 <div class="container-fluid mt-2">
-   
     <h1 class="mb-5 fw-bold" style="color: #000000;">Nueva Carrera</h1>
 
     <div class="row">
@@ -56,29 +55,32 @@
                     Nueva Carrera
                 </div>
                 <div class="p-4">
-                    <form asp-action="Create">
+                    <form id="formCreateCarrera" asp-action="Create">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="form-group mb-4">
                             <label asp-for="Nombre" class="form-label fw-bold"></label>
-                            <input asp-for="Nombre" class="form-control custom-input" />
+                            <input asp-for="Nombre" id="Nombre" class="form-control custom-input" maxlength="150" />
                             <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <span id="errNombre" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="form-group mb-4">
                             <label asp-for="Descripcion" class="form-label fw-bold">Descripción</label>
-                            <input asp-for="Descripcion" class="form-control custom-input" />
+                            <input asp-for="Descripcion" id="Descripcion" class="form-control custom-input" />
                             <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            <span id="errDescripcion" class="text-danger small d-none"></span>
                         </div>
 
                         <div class="row align-items-end mb-3">
                             <div class="col-md-7 form-group mb-3 mb-md-0">
                                 <label asp-for="TipoCarrera" class="form-label fw-bold">Tipo de Carrera</label>
-                                <input asp-for="TipoCarrera" class="form-control custom-input" />
+                                <input asp-for="TipoCarrera" id="TipoCarrera" class="form-control custom-input" />
                                 <span asp-validation-for="TipoCarrera" class="text-danger"></span>
+                                <span id="errTipoCarrera" class="text-danger small d-none"></span>
                             </div>
                             <div class="col-md-5 text-end">
-                                <button type="submit" class="btn btn-guardar-proto">Guardar</button>
+                                <button type="submit" id="btnSubmit" class="btn btn-guardar-proto">Guardar</button>
                             </div>
                         </div>
                     </form>
@@ -92,4 +94,33 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function() {
+     
+            $("#Nombre").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errNombre").text("El nombre de la carrera es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 150) {
+                    $("#errNombre").text("El nombre no puede exceder los 150 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errNombre").addClass("d-none");
+                }
+            });
+
+          
+
+            $("#TipoCarrera").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errTipoCarrera").text("El tipo de carrera es obligatorio.").removeClass("d-none");
+                } else {
+                    $("#errTipoCarrera").addClass("d-none");
+                }
+            });
+
+           
+        });
+    </script>
 }
