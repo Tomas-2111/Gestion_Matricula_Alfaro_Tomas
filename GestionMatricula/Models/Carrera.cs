@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestionMatricula.Models
 {
@@ -11,9 +12,13 @@ namespace GestionMatricula.Models
         [StringLength(150)]
         public string Nombre { get; set; }
 
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
+        [Required(ErrorMessage = "El tipo de la carrera es obligatorio.")]
+        [Display(Name ="Tipo de Carrera")]
         public string TipoCarrera { get; set; }
+
+        public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
 
     }
 }

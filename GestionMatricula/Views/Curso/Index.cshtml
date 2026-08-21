@@ -1,71 +1,72 @@
 @model IEnumerable<GestionMatricula.Models.Curso>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Cursos";
+    Layout = "_LayoutPanelAdmin";
 }
 
-<h1>Index</h1>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Creditos)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProfesorId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Profesor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CarreraId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Carrera)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MatriculaCursos)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Creditos)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.ProfesorId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Profesor)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.CarreraId)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Carrera)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.MatriculaCursos)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    .table > thead > tr > th {
+        background-color: var(--institucional-teal) !important;
+        color: #ffffff !important;
+        padding: 15px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border: none;
+    }
+
+    .btn-modificar {
+        background-color: var(--institucional-brown);
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 6px 30px;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 500;
+        font-size: 0.95rem;
+        border: none;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+        .btn-modificar:hover {
+            background-color: #5c2210;
+            transform: scale(1.02);
+        }
+</style>
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4" style="font-weight: bold;">Cursos</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">@Html.DisplayNameFor(model => model.Nombre)</th>
+                <th style="width: 10%;">@Html.DisplayNameFor(model => model.Creditos)</th>
+                <th style="width: 25%;">Carrera</th>
+                <th style="width: 25%;">Profesor</th>
+                <th style="width: 15%; text-align: center;">Modificar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="align-middle">@Html.DisplayFor(modelItem => item.Nombre)</td>
+                    <td class="align-middle">@Html.DisplayFor(modelItem => item.Creditos)</td>
+                    <td class="align-middle">@Html.DisplayFor(modelItem => item.Carrera.Nombre)</td>
+                    <td class="align-middle">
+                        @(item.Profesor != null ? item.Profesor.Nombre : "Sin Asignar")
+                    </td>
+                    <td class="text-center align-middle">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-modificar">Modificar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

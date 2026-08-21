@@ -1,5 +1,5 @@
-
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GestionMatricula.Models;
 using GestionMatricula.Data;
@@ -14,50 +14,43 @@ public class CursoController : Controller
     }
 
     // GET: CURSOS
-    public async Task<IActionResult> Index()    
+    public async Task<IActionResult> Index()
     {
-        return View(await _context.Cursos.ToListAsync());
-    }
+        var cursos = await _context.Cursos
+            .Include(c => c.Carrera)
+            .Include(c => c.Profesor)
+            .ToListAsync();
 
-    // GET: CURSOS/Details/5
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var curso = await _context.Cursos
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (curso == null)
-        {
-            return NotFound();
-        }
-
-        return View(curso);
+        return View(cursos);
     }
 
     // GET: CURSOS/Create
     public IActionResult Create()
     {
+        CargarSelectLists();
         return View();
     }
 
     // POST: CURSOS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,Creditos,ProfesorId,Profesor,CarreraId,Carrera,MatriculaCursos")] Curso curso)
+    public async Task<IActionResult> Create([Bind("Nombre,Creditos,ProfesorId,CarreraId")] Curso curso)
     {
+        ModelState.Remove("Carrera");
+        ModelState.Remove("Profesor");
+        ModelState.Remove("MatriculaCursos");
+
         if (ModelState.IsValid)
         {
             _context.Add(curso);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        CargarSelectLists(curso.CarreraId, curso.ProfesorId);
         return View(curso);
-    }
+    
+}
 
     // GET: CURSOS/Edit/5
     public async Task<IActionResult> Edit(int? id)
@@ -72,20 +65,25 @@ public class CursoController : Controller
         {
             return NotFound();
         }
+
+        CargarSelectLists(curso.CarreraId, curso.ProfesorId);
         return View(curso);
     }
 
     // POST: CURSOS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Creditos,ProfesorId,Profesor,CarreraId,Carrera,MatriculaCursos")] Curso curso)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Creditos,ProfesorId,CarreraId")] Curso curso)
     {
         if (id != curso.Id)
         {
             return NotFound();
         }
+
+
+        ModelState.Remove("Carrera");
+        ModelState.Remove("Profesor");
+        ModelState.Remove("MatriculaCursos");
 
         if (ModelState.IsValid)
         {
@@ -107,6 +105,8 @@ public class CursoController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+
+        CargarSelectLists(curso.CarreraId, curso.ProfesorId);
         return View(curso);
     }
 
@@ -119,10 +119,21 @@ public class CursoController : Controller
         }
 
         var curso = await _context.Cursos
+            .Include(c => c.Carrera)
+            .Include(c => c.Profesor)
             .FirstOrDefaultAsync(m => m.Id == id);
+
         if (curso == null)
         {
             return NotFound();
+        }
+
+        bool tieneEstudiantes = await _context.MatriculasCursos
+            .AnyAsync(mc => mc.CursoId == id);
+
+        if (tieneEstudiantes)
+        {
+            ViewBag.MensajeError = "No se puede eliminar porque hay estudiantes activos en el curso.";
         }
 
         return View(curso);
@@ -131,20 +142,35 @@ public class CursoController : Controller
     // POST: CURSOS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
+     
+        bool tieneEstudiantes = await _context.MatriculasCursos
+            .AnyAsync(mc => mc.CursoId == id);
+
+        if (tieneEstudiantes)
+        {
+            TempData["MensajeError"] = "No se puede eliminar porque hay estudiantes activos en el curso.";
+            return RedirectToAction(nameof(Delete), new { id = id });
+        }
+
         var curso = await _context.Cursos.FindAsync(id);
         if (curso != null)
         {
             _context.Cursos.Remove(curso);
+            await _context.SaveChangesAsync();
         }
 
-        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-
-    private bool CursoExists(int? id)
+    private bool CursoExists(int id)
     {
         return _context.Cursos.Any(e => e.Id == id);
+    }
+
+    private void CargarSelectLists(int? carreraId = null, int? profesorId = null)
+    {
+        ViewBag.CarreraId = new SelectList(_context.Carreras, "Id", "Nombre", carreraId);
+        ViewBag.ProfesorId = new SelectList(_context.Profesores, "Id", "Nombre", profesorId);
     }
 }

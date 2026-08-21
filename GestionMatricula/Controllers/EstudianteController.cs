@@ -1,149 +1,120 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionMatricula.Models;
 using GestionMatricula.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
+
+[Authorize]
 public class EstudianteController : Controller
 {
-    private readonly ApplicationDbContext _context;
 
-    public EstudianteController(ApplicationDbContext context)
+
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<IdentityUser> _userManager;
+
+    public EstudianteController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
-    // GET: ESTUDIANTES
-    public async Task<IActionResult> Index()    
-    {
-        return View(await _context.Estudiantes.ToListAsync());
-    }
 
-    // GET: ESTUDIANTES/Details/5
-    public async Task<IActionResult> Details(int? id)
+    public async Task<IActionResult> Panel()
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        var userId = _userManager.GetUserId(User);
+
 
         var estudiante = await _context.Estudiantes
-            .FirstOrDefaultAsync(m => m.Id == id);
+            .Include(e => e.Carrera)
+            .FirstOrDefaultAsync(e => e.UserId == userId);
+
         if (estudiante == null)
         {
-            return NotFound();
+            TempData["MensajeError"] = "No tienes una carrera matriculada aún.";
+            return RedirectToAction("IndexStudent", "Carrera");
         }
+
+  
+        var cursosMatriculados = await _context.MatriculasCursos
+            .Include(mc => mc.Curso)
+                .ThenInclude(c => c.Profesor)
+            .Include(mc => mc.Matricula)
+            .Where(mc => mc.Matricula.EstudianteId == estudiante.Id)
+            .ToListAsync();
+
+        ViewBag.CursosMatriculados = cursosMatriculados;
 
         return View(estudiante);
     }
 
-    // GET: ESTUDIANTES/Create
-    public IActionResult Create()
+   
+    // GET: ESTUDIANTES/Create?carreraId=5
+    public async Task<IActionResult> Create(int? carreraId)
     {
-        return View();
+        if (carreraId == null)
+        {
+            return RedirectToAction("IndexStudent", "Carrera");
+        }
+
+        var userId = _userManager.GetUserId(User);
+
+
+        var estudianteExistente = await _context.Estudiantes.AnyAsync(e => e.UserId == userId);
+        if (estudianteExistente)
+        {
+            TempData["MensajeError"] = "El usuario ya cuenta con una carrera asignada.";
+            return RedirectToAction("IndexStudent", "Carrera");
+        }
+
+        var carrera = await _context.Carreras.FindAsync(carreraId);
+        if (carrera == null)
+        {
+            return NotFound();
+        }
+
+        var estudiante = new Estudiante
+        {
+            CarreraId = carreraId.Value,
+            UserId = userId
+        };
+
+        ViewBag.NombreCarrera = carrera.Nombre;
+
+        return View(estudiante);
     }
 
     // POST: ESTUDIANTES/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,Cedula,UserId,User,Matriculas")] Estudiante estudiante)
+    public async Task<IActionResult> Create([Bind("Nombre,Cedula,CarreraId")] Estudiante estudiante)
     {
+        var currentUserId = _userManager.GetUserId(User);
+        estudiante.UserId = currentUserId;
+
+        ModelState.Remove("UserId");
+        ModelState.Remove("User");
+        ModelState.Remove("Carrera");
+
         if (ModelState.IsValid)
         {
             _context.Add(estudiante);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(estudiante);
-    }
 
-    // GET: ESTUDIANTES/Edit/5
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
+            TempData["MensajeExito"] = "¡Te has matriculado exitosamente en la carrera!";
+
+            return RedirectToAction("IndexStudent", "Carrera");
         }
 
-        var estudiante = await _context.Estudiantes.FindAsync(id);
-        if (estudiante == null)
-        {
-            return NotFound();
-        }
-        return View(estudiante);
-    }
-
-    // POST: ESTUDIANTES/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Cedula,UserId,User,Matriculas")] Estudiante estudiante)
-    {
-        if (id != estudiante.Id)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                _context.Update(estudiante);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EstudianteExists(estudiante.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-        return View(estudiante);
-    }
-
-    // GET: ESTUDIANTES/Delete/5
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var estudiante = await _context.Estudiantes
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (estudiante == null)
-        {
-            return NotFound();
-        }
+        var carrera = await _context.Carreras.FindAsync(estudiante.CarreraId);
+        ViewBag.NombreCarrera = carrera?.Nombre;
 
         return View(estudiante);
     }
 
-    // POST: ESTUDIANTES/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
-    {
-        var estudiante = await _context.Estudiantes.FindAsync(id);
-        if (estudiante != null)
-        {
-            _context.Estudiantes.Remove(estudiante);
-        }
-
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
-
-    private bool EstudianteExists(int? id)
+    
+    private bool EstudianteExists(int id)
     {
         return _context.Estudiantes.Any(e => e.Id == id);
     }

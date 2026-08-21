@@ -1,53 +1,82 @@
 @model IEnumerable<GestionMatricula.Models.Profesor>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Profesores";
+    Layout = "_LayoutPanelAdmin";
 }
 
-<h1>Index</h1>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Especialidad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GradoAcademico)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cursos)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(model => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Especialidad)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.GradoAcademico)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Cursos)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    .table > thead > tr > th {
+        background-color: var(--institucional-teal) !important;
+        color: #ffffff !important;
+        padding: 15px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border: none;
+    }
+
+    .btn-modificar {
+        background-color: var(--institucional-brown);
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 6px 30px;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 500;
+        font-size: 0.95rem;
+        border: none;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+        .btn-modificar:hover {
+            background-color: #5c2210;
+            transform: scale(1.02);
+        }
+</style>
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4" style="font-weight: bold;">Profesores</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width: 30%;">
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th style="width: 35%;">
+                    @Html.DisplayNameFor(model => model.Especialidad)
+                </th>
+                <th style="width: 20%;">
+                    @Html.DisplayNameFor(model => model.GradoAcademico)
+                </th>
+                <th style="width: 15%; text-align: center;">
+                    Modificar
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.Especialidad)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.GradoAcademico)
+                    </td>
+                    <td class="text-center align-middle">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-modificar">Modificar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

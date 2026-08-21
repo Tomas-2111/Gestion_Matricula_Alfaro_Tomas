@@ -1,66 +1,144 @@
 @model GestionMatricula.Models.Curso
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nuevo Curso";
+    Layout = "_LayoutPanelAdmin";
 }
 
-<h1>Create</h1>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
 
-<h4>Curso</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .form-box {
+        border: 2px solid var(--institucional-teal);
+        background-color: #ffffff;
+    }
 
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
+    .box-header {
+        background-color: var(--institucional-teal);
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+    }
 
-            <div class="form-group">
-                <label asp-for="Creditos" class="control-label"></label>
-                <input asp-for="Creditos" class="form-control" />
-                <span asp-validation-for="Creditos" class="text-danger"></span>
-            </div>
+    .custom-input {
+        border-radius: 12px !important;
+        border: 1px solid #000000;
+        padding: 10px 15px;
+    }
 
-            <div class="form-group">
-                <label asp-for="ProfesorId" class="control-label"></label>
-                <input asp-for="ProfesorId" class="form-control" />
-                <span asp-validation-for="ProfesorId" class="text-danger"></span>
-            </div>
+    .btn-guardar-proto {
+        background-color: var(--institucional-brown);
+        color: #ffffff !important;
+        border-radius: 15px;
+        padding: 8px 45px;
+        font-weight: 500;
+        border: none;
+        transition: opacity 0.2s ease;
+    }
 
-            <div class="form-group">
-                <label asp-for="Profesor" class="control-label"></label>
-                <input asp-for="Profesor" class="form-control" />
-                <span asp-validation-for="Profesor" class="text-danger"></span>
-            </div>
+        .btn-guardar-proto:hover {
+            opacity: 0.9;
+            color: #ffffff;
+        }
+</style>
 
-            <div class="form-group">
-                <label asp-for="CarreraId" class="control-label"></label>
-                <input asp-for="CarreraId" class="form-control" />
-                <span asp-validation-for="CarreraId" class="text-danger"></span>
-            </div>
+<div class="container-fluid mt-2">
+    <h1 class="mb-5 fw-bold" style="color: #000000;">Nuevo Curso</h1>
 
-            <div class="form-group">
-                <label asp-for="Carrera" class="control-label"></label>
-                <input asp-for="Carrera" class="form-control" />
-                <span asp-validation-for="Carrera" class="text-danger"></span>
-            </div>
+    <div class="row">
+        <div class="col-12 col-lg-10">
+            <div class="form-box">
+                <div class="box-header">
+                    Nuevo Curso
+                </div>
+                <div class="p-4">
+                    <form id="formCreateCurso" asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="form-group">
-                <label asp-for="MatriculaCursos" class="control-label"></label>
-                <input asp-for="MatriculaCursos" class="form-control" />
-                <span asp-validation-for="MatriculaCursos" class="text-danger"></span>
+                        <div class="form-group mb-4">
+                            <label asp-for="Nombre" class="form-label fw-bold"></label>
+                            <input asp-for="Nombre" id="Nombre" class="form-control custom-input" maxlength="150" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <span id="errNombre" class="text-danger small d-none"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="CarreraId" class="form-label fw-bold">Carrera</label>
+                            <select asp-for="CarreraId" id="CarreraId" class="form-control custom-input" asp-items="ViewBag.CarreraId">
+                                <option value="">-- Seleccione una Carrera --</option>
+                            </select>
+                            <span asp-validation-for="CarreraId" class="text-danger"></span>
+                            <span id="errCarreraId" class="text-danger small d-none"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="ProfesorId" class="form-label fw-bold">Profesor (Opcional)</label>
+                            <select asp-for="ProfesorId" id="ProfesorId" class="form-control custom-input" asp-items="ViewBag.ProfesorId">
+                                <option value="">-- Seleccione un Profesor --</option>
+                            </select>
+                            <span asp-validation-for="ProfesorId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row align-items-end mb-3">
+                            <div class="col-md-7 form-group mb-3 mb-md-0">
+                                <label asp-for="Creditos" class="form-label fw-bold">Créditos</label>
+                                <input asp-for="Creditos" id="Creditos" type="number" class="form-control custom-input" min="1" max="5" />
+                                <span asp-validation-for="Creditos" class="text-danger"></span>
+                                <span id="errCreditos" class="text-danger small d-none"></span>
+                            </div>
+                            <div class="col-md-5 text-end">
+                                <button type="submit" id="btnSubmit" class="btn btn-guardar-proto">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+    
+            $("#Nombre").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errNombre").text("El nombre del curso es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 150) {
+                    $("#errNombre").text("El nombre no puede superar los 150 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errNombre").addClass("d-none");
+                }
+            });
+
+            $("#CarreraId").on("change blur", function() {
+                var valor = $(this).val();
+                if (valor === "" || valor === null) {
+                    $("#errCarreraId").text("La carrera del curso es obligatoria.").removeClass("d-none");
+                } else {
+                    $("#errCarreraId").addClass("d-none");
+                }
+            });
+
+            $("#Creditos").on("keyup change blur", function() {
+                var valor = parseInt($(this).val(), 10);
+                if (isNaN(valor)) {
+                    $("#errCreditos").text("Los créditos del curso son obligatorios.").removeClass("d-none");
+                } else if (valor < 1 || valor > 5) {
+                    $("#errCreditos").text("Los créditos deben estar entre 1 y 5.").removeClass("d-none");
+                } else {
+                    $("#errCreditos").addClass("d-none");
+                }
+            });
+
+        });
+    </script>
+}

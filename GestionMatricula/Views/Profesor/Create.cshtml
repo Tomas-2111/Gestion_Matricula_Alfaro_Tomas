@@ -1,48 +1,137 @@
 @model GestionMatricula.Models.Profesor
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nuevo Profesor";
+    Layout = "_LayoutPanelAdmin";
 }
 
-<h1>Create</h1>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
 
-<h4>Profesor</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .form-box {
+        border: 2px solid var(--institucional-teal);
+        background-color: #ffffff;
+    }
 
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
+    .box-header {
+        background-color: var(--institucional-teal);
+        color: #ffffff;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+    }
 
-            <div class="form-group">
-                <label asp-for="Especialidad" class="control-label"></label>
-                <input asp-for="Especialidad" class="form-control" />
-                <span asp-validation-for="Especialidad" class="text-danger"></span>
-            </div>
+    .custom-input {
+        border-radius: 12px !important;
+        border: 1px solid #000000;
+        padding: 10px 15px;
+    }
 
-            <div class="form-group">
-                <label asp-for="GradoAcademico" class="control-label"></label>
-                <input asp-for="GradoAcademico" class="form-control" />
-                <span asp-validation-for="GradoAcademico" class="text-danger"></span>
-            </div>
+    .btn-guardar-proto {
+        background-color: var(--institucional-brown);
+        color: #ffffff !important;
+        border-radius: 15px;
+        padding: 8px 45px;
+        font-weight: 500;
+        border: none;
+        transition: opacity 0.2s ease;
+    }
 
-            <div class="form-group">
-                <label asp-for="Cursos" class="control-label"></label>
-                <input asp-for="Cursos" class="form-control" />
-                <span asp-validation-for="Cursos" class="text-danger"></span>
+        .btn-guardar-proto:hover {
+            opacity: 0.9;
+            color: #ffffff;
+        }
+</style>
+
+<div class="container-fluid mt-2">
+    <h1 class="mb-5 fw-bold" style="color: #000000;">Nuevo Profesor</h1>
+
+    <div class="row">
+        <div class="col-12 col-lg-10">
+            <div class="form-box">
+                <div class="box-header">
+                    Nuevo Profesor
+                </div>
+                <div class="p-4">
+                    <form id="formCreateProfesor" asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Nombre" class="form-label fw-bold"></label>
+                            <input asp-for="Nombre" id="Nombre" class="form-control custom-input" maxlength="100" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                            <span id="errNombre" class="text-danger small d-none"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Especialidad" class="form-label fw-bold">Especialidad</label>
+                            <input asp-for="Especialidad" id="Especialidad" class="form-control custom-input" maxlength="100" />
+                            <span asp-validation-for="Especialidad" class="text-danger"></span>
+                            <span id="errEspecialidad" class="text-danger small d-none"></span>
+                        </div>
+
+                        <div class="row align-items-end mb-3">
+                            <div class="col-md-7 form-group mb-3 mb-md-0">
+                                <label asp-for="GradoAcademico" class="form-label fw-bold">Grado Académico</label>
+                                <input asp-for="GradoAcademico" id="GradoAcademico" class="form-control custom-input" maxlength="100" />
+                                <span asp-validation-for="GradoAcademico" class="text-danger"></span>
+                                <span id="errGradoAcademico" class="text-danger small d-none"></span>
+                            </div>
+                            <div class="col-md-5 text-end">
+                                <button type="submit" id="btnSubmit" class="btn btn-guardar-proto">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+
+            $("#Nombre").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errNombre").text("El nombre es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errNombre").text("El nombre no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errNombre").addClass("d-none");
+                }
+            });
+
+            $("#Especialidad").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errEspecialidad").text("La especialidad es obligatoria.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errEspecialidad").text("La especialidad no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errEspecialidad").addClass("d-none");
+                }
+            });
+
+            $("#GradoAcademico").on("keyup blur", function() {
+                var valor = $(this).val().trim();
+                if (valor === "") {
+                    $("#errGradoAcademico").text("El grado académico es obligatorio.").removeClass("d-none");
+                } else if (valor.length > 100) {
+                    $("#errGradoAcademico").text("El grado académico no puede superar los 100 caracteres.").removeClass("d-none");
+                } else {
+                    $("#errGradoAcademico").addClass("d-none");
+                }
+            });
+
+     
+        });
+    </script>
+}

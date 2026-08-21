@@ -1,27 +1,104 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Mi Perfil";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
+<style>
+    :root {
+        --institucional-teal: #176B7B;
+        --institucional-brown: #782E16;
+    }
+
+    .profile-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding-top: 20px;
+    }
+
+    .welcome-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #000000;
+        margin-top: 20px;
+        margin-bottom: 35px;
+    }
+
+    .profile-card {
+        background-color: var(--institucional-teal);
+        border-radius: 12px;
+        padding: 40px 50px;
+        max-width: 550px;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+        .profile-card .form-label {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .profile-card .form-control {
+            border-radius: 10px;
+            height: 48px;
+            border: none;
+            font-size: 1rem;
+            padding-left: 15px;
+        }
+
+            .profile-card .form-control:disabled {
+                background-color: #e9ecef;
+                opacity: 0.85;
+            }
+
+    .btn-guardar {
+        background-color: var(--institucional-brown);
+        color: #ffffff;
+        border: none;
+        padding: 12px 45px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-guardar:hover {
+        background-color: #5c2210;
+        color: #ffffff;
+    }
+</style>
+
+<div class="profile-container container">
+    <div class="text-center">
+        <h2 class="welcome-title">Mi Perfil</h2>
+    </div>
+
+    <div class="d-flex justify-content-center mb-5">
+        <div class="profile-card">
+
+            <partial name="_StatusMessage" for="StatusMessage" />
+
+            <form id="profile-form" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Username" class="form-label">Usuario / Correo</label>
+                    <input asp-for="Username" class="form-control" disabled />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Input.PhoneNumber" class="form-label">Número de Teléfono</label>
+                    <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Ingrese su teléfono" />
+                    <span asp-validation-for="Input.PhoneNumber" class="text-warning small"></span>
+                </div>
+
+                <div class="text-center mt-5">
+                    <button id="update-profile-button" type="submit" class="btn-guardar w-100">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

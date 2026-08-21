@@ -1,150 +1,98 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using GestionMatricula.Models;
 using GestionMatricula.Data;
 
 public class MatriculaController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public MatriculaController(ApplicationDbContext context)
+    public MatriculaController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
-    // GET: MATRICULAS
-    public async Task<IActionResult> Index()    
+    // GET: Matricula/MatricularCurso
+    public async Task<IActionResult> MatricularCurso()
     {
-        return View(await _context.Matriculas.ToListAsync());
-    }
+        var userId = _userManager.GetUserId(User);
 
-    // GET: MATRICULAS/Details/5
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null)
+      
+        var estudiante = await _context.Estudiantes
+            .Include(e => e.Carrera)
+            .FirstOrDefaultAsync(e => e.UserId == userId);
+
+        if (estudiante == null)
         {
-            return NotFound();
+            TempData["MensajeError"] = "No tienes un perfil de estudiante registrado.";
+            return RedirectToAction("Index", "Home");
         }
 
-        var matricula = await _context.Matriculas
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (matricula == null)
-        {
-            return NotFound();
-        }
+       
+        var cursosCarrera = await _context.Cursos
+            .Include(c => c.Profesor)
+            .Where(c => c.CarreraId == estudiante.CarreraId)
+            .ToListAsync();
 
-        return View(matricula);
+
+        var cursosYaMatriculados = await _context.MatriculasCursos
+            .Include(mc => mc.Matricula)
+            .Where(mc => mc.Matricula.EstudianteId == estudiante.Id)
+            .Select(mc => mc.CursoId)
+            .ToListAsync();
+
+        ViewBag.CursosYaMatriculados = cursosYaMatriculados;
+        ViewBag.Estudiante = estudiante;
+
+        return View(cursosCarrera);
     }
 
-    // GET: MATRICULAS/Create
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    // POST: MATRICULAS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // POST: Matricula/MatricularCurso
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,FechaMatricula,EstudianteId,Estudiante,MatriculaCursos")] Matricula matricula)
+    public async Task<IActionResult> MatricularCurso(List<int> cursosSeleccionados)
     {
-        if (ModelState.IsValid)
-        {
-            _context.Add(matricula);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(matricula);
-    }
+        var userId = _userManager.GetUserId(User);
+        var estudiante = await _context.Estudiantes.FirstOrDefaultAsync(e => e.UserId == userId);
 
-    // GET: MATRICULAS/Edit/5
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null)
+        if (estudiante == null)
         {
-            return NotFound();
+            return RedirectToAction("Index", "Home");
         }
 
-        var matricula = await _context.Matriculas.FindAsync(id);
-        if (matricula == null)
+        if (cursosSeleccionados == null || !cursosSeleccionados.Any())
         {
-            return NotFound();
-        }
-        return View(matricula);
-    }
-
-    // POST: MATRICULAS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,FechaMatricula,EstudianteId,Estudiante,MatriculaCursos")] Matricula matricula)
-    {
-        if (id != matricula.Id)
-        {
-            return NotFound();
+            TempData["MensajeErrorM"] = "Debe seleccionar al menos un curso para matricular.";
+            return RedirectToAction(nameof(MatricularCurso));
         }
 
-        if (ModelState.IsValid)
+    
+        var nuevaMatricula = new Matricula
         {
-            try
+            EstudianteId = estudiante.Id,
+            FechaMatricula = DateTime.Now
+        };
+
+        _context.Matriculas.Add(nuevaMatricula);
+        await _context.SaveChangesAsync(); 
+
+
+        foreach (var cursoId in cursosSeleccionados)
+        {
+            var detalle = new MatriculaCurso
             {
-                _context.Update(matricula);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MatriculaExists(matricula.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-        return View(matricula);
-    }
-
-    // GET: MATRICULAS/Delete/5
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var matricula = await _context.Matriculas
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (matricula == null)
-        {
-            return NotFound();
-        }
-
-        return View(matricula);
-    }
-
-    // POST: MATRICULAS/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
-    {
-        var matricula = await _context.Matriculas.FindAsync(id);
-        if (matricula != null)
-        {
-            _context.Matriculas.Remove(matricula);
+                MatriculaId = nuevaMatricula.Id,
+                CursoId = cursoId
+            };
+            _context.MatriculasCursos.Add(detalle);
         }
 
         await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
 
-    private bool MatriculaExists(int? id)
-    {
-        return _context.Matriculas.Any(e => e.Id == id);
+        TempData["MensajeExitoM"] = "Cursos matriculados exitosamente!";
+        return RedirectToAction("Panel", "Estudiante");
     }
 }

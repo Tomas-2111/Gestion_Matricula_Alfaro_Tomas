@@ -48,7 +48,7 @@ public class ProfesorController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,Especialidad,GradoAcademico,Cursos")] Profesor profesor)
+    public async Task<IActionResult> Create([Bind("Id,Nombre,Especialidad,GradoAcademico")] Profesor profesor)
     {
         if (ModelState.IsValid)
         {
@@ -80,7 +80,7 @@ public class ProfesorController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Especialidad,GradoAcademico,Cursos")] Profesor profesor)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Especialidad,GradoAcademico")] Profesor profesor)
     {
         if (id != profesor.Id)
         {

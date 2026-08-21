@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionMatricula.Models;
 using GestionMatricula.Data;
+using Microsoft.AspNetCore.Authorization;
+
 
 public class CarreraController : Controller
 {
@@ -14,6 +16,7 @@ public class CarreraController : Controller
     }
 
     // GET: CARRERAS
+    [Authorize(Roles ="Admin")]
     public async Task<IActionResult> Index()    
     {
         return View(await _context.Carreras.ToListAsync());
@@ -44,6 +47,7 @@ public class CarreraController : Controller
     }
 
     // GET: CARRERAS/Create
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         return View();
@@ -54,6 +58,7 @@ public class CarreraController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,TipoCarrera")] Carrera carrera)
     {
         if (ModelState.IsValid)
@@ -66,6 +71,7 @@ public class CarreraController : Controller
     }
 
     // GET: CARRERAS/Edit/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -86,6 +92,7 @@ public class CarreraController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Descripcion,TipoCarrera")] Carrera carrera)
     {
         if (id != carrera.Id)
@@ -117,6 +124,7 @@ public class CarreraController : Controller
     }
 
     // GET: CARRERAS/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -137,6 +145,7 @@ public class CarreraController : Controller
     // POST: CARRERAS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
         var carrera = await _context.Carreras.FindAsync(id);
@@ -148,6 +157,7 @@ public class CarreraController : Controller
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+
 
     private bool CarreraExists(int? id)
     {
