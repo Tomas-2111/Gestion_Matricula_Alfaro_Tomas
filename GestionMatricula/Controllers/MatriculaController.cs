@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using GestionMatricula.Models;
 using GestionMatricula.Data;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 public class MatriculaController : Controller
 {
     private readonly ApplicationDbContext _context;

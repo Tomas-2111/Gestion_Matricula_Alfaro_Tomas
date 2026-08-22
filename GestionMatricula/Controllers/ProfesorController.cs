@@ -1,8 +1,9 @@
 
+using GestionMatricula.Data;
+using GestionMatricula.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GestionMatricula.Models;
-using GestionMatricula.Data;
 
 public class ProfesorController : Controller
 {
@@ -14,12 +15,14 @@ public class ProfesorController : Controller
     }
 
     // GET: PROFESORS
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Index()    
     {
         return View(await _context.Profesores.ToListAsync());
     }
 
     // GET: PROFESORS/Details/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -38,6 +41,7 @@ public class ProfesorController : Controller
     }
 
     // GET: PROFESORS/Create
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         return View();
@@ -48,6 +52,7 @@ public class ProfesorController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([Bind("Id,Nombre,Especialidad,GradoAcademico")] Profesor profesor)
     {
         if (ModelState.IsValid)
@@ -60,6 +65,7 @@ public class ProfesorController : Controller
     }
 
     // GET: PROFESORS/Edit/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -80,6 +86,7 @@ public class ProfesorController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Especialidad,GradoAcademico")] Profesor profesor)
     {
         if (id != profesor.Id)
@@ -111,6 +118,7 @@ public class ProfesorController : Controller
     }
 
     // GET: PROFESORS/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -131,6 +139,7 @@ public class ProfesorController : Controller
     // POST: PROFESORS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
         var profesor = await _context.Profesores.FindAsync(id);
