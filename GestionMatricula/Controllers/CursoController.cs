@@ -1,8 +1,9 @@
+using GestionMatricula.Data;
+using GestionMatricula.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GestionMatricula.Models;
-using GestionMatricula.Data;
 
 public class CursoController : Controller
 {
@@ -14,6 +15,7 @@ public class CursoController : Controller
     }
 
     // GET: CURSOS
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Index()
     {
         var cursos = await _context.Cursos
@@ -25,6 +27,7 @@ public class CursoController : Controller
     }
 
     // GET: CURSOS/Create
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         CargarSelectLists();
@@ -34,6 +37,7 @@ public class CursoController : Controller
     // POST: CURSOS/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([Bind("Nombre,Creditos,ProfesorId,CarreraId")] Curso curso)
     {
         ModelState.Remove("Carrera");
@@ -53,6 +57,7 @@ public class CursoController : Controller
 }
 
     // GET: CURSOS/Edit/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -73,6 +78,7 @@ public class CursoController : Controller
     // POST: CURSOS/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Creditos,ProfesorId,CarreraId")] Curso curso)
     {
         if (id != curso.Id)
@@ -111,6 +117,7 @@ public class CursoController : Controller
     }
 
     // GET: CURSOS/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -142,6 +149,7 @@ public class CursoController : Controller
     // POST: CURSOS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
      
